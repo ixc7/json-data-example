@@ -3,41 +3,45 @@
 import { readFile, writeFile } from 'fs/promises'
 import { emitKeypressEvents } from 'readline'
 
+const { parse, stringify } = JSON
+const { ceil, floor, random } = Math
+
 const chars = 'abcdefghijklmnopqrstuvwxyz'
 const filename = 'data.json'
+const frequency = 5000
 
-const multiply = n => Math.ceil(Math.random() * n) * Math.ceil(Math.random() * n)
-
-const randomIndex = () => Math.floor(Math.random() * chars.length) - 1
-
-const randomString = len => {
-  return Array.from(Array(multiply(len)))
-    .map(() => chars[randomIndex()])
-    .join('')
-}
-
-const randomStrings = len => {
-  return Array.from(Array(multiply(len)))
-    .map(() => randomString(multiply(len)))
-    .join(', ')
-}
-
-const getData = async () => JSON.parse((await readFile('data.json')).toString())
-
-const setData = async (k = 4, v = 4) => {
+const tryCatch = fn => {
   try {
-    await writeFile(filename, JSON.stringify({
-      ...await getData(),
-      [randomString(k)]: randomStrings(v)
-    }))
-  }
-  catch (e) {
+    return fn()
+  } catch (e) {
     console.log(`${e.name}: ${e.message}`)
+    process.exit(0)
   }
 }
+
+const multiply = n => ceil(random() * n) * ceil(random() * n)
+
+const array = len => Array.from(Array(multiply(len)))
+
+const word = len => array(len)
+  .map(() => chars[floor(random() * chars.length) - 1])
+  .join('')
+
+const sentence = len => array(len)
+  .map(() => word(multiply(len)))
+  .join(', ')
+
+const getter = () => tryCatch(async () => parse((await readFile(filename)).toString()))
+
+const setter = async (wLen = 4, sLen = 4) => tryCatch(async () =>
+  await writeFile(filename, stringify({
+    ...await getter(),
+    [word(wLen)]: sentence(sLen)
+  }))
+)
 
 const draw = async () => {
-  const data = await getData()
+  const data = await getter()
   console.clear()
   console.log(data)
   console.log(`
@@ -45,22 +49,17 @@ const draw = async () => {
     \rfile: ${filename}
     \ritems: ${Object.keys(data).length}
     \rlast updated: ${new Date().toLocaleString()}
+    \rupdate frequency: ${frequency}ms
 
     \r=======================
     \rpress [any key] to exit
   `)
 }
 
-const interval = setInterval(async () => {
-  try {
-    await setData()
+const interval = setInterval(async () => tryCatch(async () => {
+  await setter()
     draw()
-  }
-  catch (e) {
-    console.log(`${e.name}: ${e.message}`)
-    process.exit(0)
-  }
-}, 7500)
+  }), frequency)
 
 process.stdin.setRawMode(true)
 process.stdin.on('keypress', () => process.exit(0))
