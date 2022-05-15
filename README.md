@@ -1,6 +1,10 @@
 ## JSON data example
 
 ```sh
+./index.js
+```
+
+```sh
 {
   nphlgwlixvsvojia: 'brkqjvkns, mivmpmpwoquyvcbuhytcuxjcobhcvjjibppxffk, bwd, ssypwtoqlgxgvbngi, eicadfeeajkusovrtjmsewrtesfiudhbaymwrpktosrhbfldssongrhlxsmxn, wiktgvvrftxvewqmdivglptjgduaqdhwaqehmfsdbaljpknyvsbdoebvqwsvicnmedhbacdrijpvogphewurj, bv, kjvsdvqup, wy, kmjtkdqivqqfmetowqapbcwgxedjmkwhvnfjyrpngpktdileeqwovciqlcgaamhibitajgegupjlhkglogwsn, snpx, lvubvukcfvrrxsrk, yev, mrfvsmsltwbuvhivc, siilqfqec, pvgvgbmrcimdhplfiiekquihypwqaxpfatxrmynrwetvnwcgugnufml'
 }
